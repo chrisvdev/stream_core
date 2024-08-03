@@ -4,6 +4,7 @@ export type TwitchOAuth2Response = {
   access_token: string;
   expires_in: number;
   token_type: "bearer";
+  refresh_token?: string;
 };
 
 export type TwitchOAuth2CallBack = (thisInstance: TwitchOAuth2) => void;
@@ -144,3 +145,18 @@ export interface EventSubSubscriptionTransport {
   method: "websocket";
   session_id: string;
 }
+
+export type TokenXWWWFormUrlEncodedData = {
+  client_id: string;
+  client_secret: string;
+  grant_type: "client_credentials" | "authorization_code" | "refresh_token";
+  code?: string;
+  redirect_uri?: string;
+  refresh_token?: string;
+};
+
+export type TwitchError = {
+  error: string;
+  status?: number;
+  message: string;
+};

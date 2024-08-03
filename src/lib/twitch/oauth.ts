@@ -2,10 +2,13 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { createRequire } from "module";
 import {
   TokenLevel,
+  TokenXWWWFormUrlEncodedData,
+  TwitchError,
   TwitchOAuth2CallBack,
   TwitchOAuth2Response,
 } from "./types.js";
 import Logger from "@lib/log/logger.js";
+import { BASE_URL, REDIRECT_PATH, SCOPES } from "../environment.js";
 const moduleLogger = new Logger("Twitch->OAuth");
 const { log, warn, error } = moduleLogger;
 const require = createRequire(import.meta.url);
@@ -18,39 +21,68 @@ const data = qs.stringify({
   grant_type: "client_credentials",
 });
 
-const scopes = ["user:bot", "user:read:chat", "moderator:manage:announcements"];
-
-const config: AxiosRequestConfig = {
-  method: "post",
-  maxBodyLength: Infinity,
-  url: "https://id.twitch.tv/oauth2/token",
-  params: { scope: scopes.join(" ") },
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded",
-  },
-  data: data,
-};
-
 export class TwitchOAuth2 {
+  private scopes = SCOPES;
   private twitchAccessToken: string = "";
   private tokenExpiresIn: number = 0;
+  private userCode: string | null = null;
+  private refreshToken: string | null = null;
   private currentTokenLevel: TokenLevel = TokenLevel.APPLICATION;
   private timer: NodeJS.Timeout = 0 as unknown as NodeJS.Timeout;
   private ready: boolean = false;
   private toCallWhenReady: TwitchOAuth2CallBack[] = [];
   constructor() {
-    // this.init();
+    this.init();
+  }
+
+  private getXWWWFormUrlEncodedData() {
+    let data: TokenXWWWFormUrlEncodedData = {
+      client_id: TWITCH_CLIENT_ID as string,
+      client_secret: TWITCH_CLIENT_SECRET as string,
+      grant_type: "client_credentials",
+    };
+    if (this.refreshToken) {
+      data = {
+        ...data,
+        grant_type: "refresh_token",
+        refresh_token: this.refreshToken,
+      };
+    } else if (this.userCode) {
+      data = {
+        ...data,
+        grant_type: "authorization_code",
+        code: this.userCode,
+        redirect_uri: BASE_URL + REDIRECT_PATH,
+      };
+    }
+
+    return qs.stringify(data);
   }
 
   private async updateAccessToken() {
     try {
-      const response = await axios.request(config);
+      const response = await axios.request({
+        method: "post",
+        maxBodyLength: Infinity,
+        url: "https://id.twitch.tv/oauth2/token",
+        params: { scope: this.scopes.join(" ") },
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        data: this.getXWWWFormUrlEncodedData(),
+      });
+      log("Got new Twitch access token", response.data);
       const { access_token, expires_in } =
         response.data as TwitchOAuth2Response;
       this.twitchAccessToken = access_token;
       this.tokenExpiresIn = expires_in;
       this.ready = true;
-      this.currentTokenLevel = TokenLevel.APPLICATION;
+      this.currentTokenLevel = this.userCode
+        ? TokenLevel.USER
+        : TokenLevel.APPLICATION;
+      if (response.data.refresh_token)
+        this.refreshToken = response.data.refresh_token;
+      else this.refreshToken = null;
       for (const cb of this.toCallWhenReady) {
         cb(this);
       }
@@ -63,9 +95,9 @@ export class TwitchOAuth2 {
           this.updateAccessToken();
         }
       }, 1000);
-    } catch (error) {
-      const { name, message, toJSON } = error as AxiosError;
-      console.error(name, message, toJSON());
+    } catch (err) {
+      const { name, message, response } = err as AxiosError<TwitchError>;
+      error(name, message, response?.data.message);
       throw error;
     }
   }
@@ -92,16 +124,13 @@ export class TwitchOAuth2 {
     }
   }
 
-  public setUserToken(userToken: string) {
-    this.ready = true;
+  public setUserToken(code: string) {
+    this.ready = false;
     this.tokenExpiresIn = 0;
     clearInterval(this.timer);
     this.timer = 0 as unknown as NodeJS.Timeout;
-    this.twitchAccessToken = userToken;
-    this.currentTokenLevel = TokenLevel.USER;
-    for (const cb of this.toCallWhenReady) {
-      cb(this);
-    }
+    this.userCode = code;
+    this.updateAccessToken();
   }
   get accessToken() {
     return this.ready ? this.twitchAccessToken : null;

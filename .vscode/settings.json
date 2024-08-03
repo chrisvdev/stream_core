@@ -9,6 +9,7 @@
     "MIDIOUT",
     "noteoff",
     "noteon",
-    "streamcore"
+    "streamcore",
+    "XWWW"
   ]
 }

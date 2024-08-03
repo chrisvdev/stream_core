@@ -1,10 +1,15 @@
-import { HTTP_PORT } from "./lib/enviroment.js";
+import { HTTP_PORT } from "./lib/environment.js";
 import Logger from "./lib/log/logger.js";
 import httpServer from "./lib/http_server.js";
 import twitchOAuth2 from "./lib/twitch/oauth.js";
-import { EventSubSubscriptionRequest, TokenLevel } from "./lib/twitch/types.js";
+import {
+  EventSubSubscriptionRequest,
+  TokenLevel,
+  TwitchError,
+} from "./lib/twitch/types.js";
 import EventSub from "./lib/twitch/eventsub_ws.js";
 import Twitch from "./lib/twitch/base_api.js";
+import { AxiosError } from "axios";
 
 const logger = new Logger("StreamCore");
 const { log, warn, error } = logger;
@@ -24,12 +29,24 @@ eventSub.onWelcome((message) => {
       session_id: id,
     },
   };
-  twitch.baseAPI?.post("/eventsub/subscriptions", request, {
-    headers: { "Content-Type": "application/json" },
-  });
+  twitch.baseAPI
+    ?.post("/eventsub/subscriptions", request, {
+      headers: { "Content-Type": "application/json" },
+    })
+    .then((response) => {
+      log("Subscription created", response.data);
+    })
+    .catch((err) => {
+      const e = err as AxiosError<TwitchError>;
+      error(
+        "Failed to create subscription",
+        e.message,
+        e.response?.data.message
+      );
+    });
 });
 eventSub.onNotification((message) => {
-  log("Notification received", message);
+  log("Notification received", JSON.stringify(message, null, 2));
 });
 
 log("Starting...");
