@@ -1,0 +1,5 @@
+TWITCH_CLIENT_ID=<twitch_client_id>
+TWITCH_CLIENT_SECRET=<twitch_client_secret>
+BASE_URL=http://localhost:3000
+REDIRECT_PATH=/twitch/user_token
+HTTP_PORT=3000
