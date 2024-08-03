@@ -1,3 +1,8 @@
+/*
+Este modulo implementa la aplicación OAuth2 de Twitch y sus ciclos de vida dependiendo 
+del tipo de token que se quiera utilizar asegurando que se mantenga la validez del mismo
+*/
+
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { createRequire } from "module";
 import {

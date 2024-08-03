@@ -1,3 +1,7 @@
+/*
+Controla un estado para la autenticación y autorización de los módulos
+*/
+
 import { v4 as uuid } from "uuid";
 
 class StateChecker {

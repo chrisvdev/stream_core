@@ -1,3 +1,9 @@
+/*
+Este modulo implementa la conexión WebSocket de EventSub y la gestión de sus callbacks.
+Ya resuelve el ciclo de vida que enuncia la documentación de EventSub.
+Solo te suscribirás a eventos mediante callbacks y recibirás notificaciones de eventos
+*/
+
 import WebSocket from "ws";
 import {
   EventSubBasicMessage,

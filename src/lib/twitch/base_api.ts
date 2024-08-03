@@ -1,3 +1,9 @@
+/*
+Este modulo se comporta como base para todas las llamadas a la API de Twitch 
+que se quieran hacer, implementa el que si se actualiza el token automáticamente
+este se vuelve a generar para la proxima petición
+*/
+
 import twitchOAuth2 from "./oauth.js";
 import axios, { AxiosInstance } from "axios";
 import Logger from "../log/logger.js";

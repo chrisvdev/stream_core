@@ -1,3 +1,7 @@
+/*
+Esto es solo una implementación provisoria para probar que funcionen los módulos
+*/
+
 import express from "express";
 import morgan from "morgan";
 import stateChecker from "@lib/state_checker.js";
@@ -13,7 +17,7 @@ const httpServer = express();
 
 httpServer.use(morgan("dev"));
 
-const oAuthAuthorizeURL = new URL("https://id.twitch.tv/oauth2/authorize");
+const oAuthAuthorizeURL = new URL("https://id.twitch.tv/oauth2/authorize"); //esto esta mal aca, debería estar en la clase TwitchOAuth2 como un método que lo genera
 oAuthAuthorizeURL.searchParams.set("response_type", "code");
 oAuthAuthorizeURL.searchParams.set("client_id", TWITCH_CLIENT_ID);
 oAuthAuthorizeURL.searchParams.set(
@@ -24,6 +28,7 @@ oAuthAuthorizeURL.searchParams.set("scope", SCOPES.join(" "));
 oAuthAuthorizeURL.searchParams.set("state", stateChecker.currentState);
 
 httpServer.get("/", (req, res) => {
+  // con este path se direcciona al flujo de autorización, podría ser un redirect pero quiero que esto evolucione a un panel de estado completo
   res.setHeader("Content-Type", "text/html; charset=UTF-8");
   res.end(/*html*/ `<!DOCTYPE html>
 <html lang="en">
@@ -46,6 +51,7 @@ httpServer.get("/", (req, res) => {
 `);
 });
 httpServer.get(REDIRECT_PATH, (req, res) => {
+  //con este path se obtiene el código para gestionar el User Access Token mediante el flujo Authorization code grant flow
   const { code, scope, state } = req.query as UserTokenParams;
   const scopes = scope.split(" ");
   const correctState = stateChecker.validate(state);
