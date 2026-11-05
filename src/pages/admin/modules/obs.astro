@@ -1,0 +1,8 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import ObsPanel from "../../../components/modules/obs/ObsPanel";
+---
+
+<AdminLayout title="OBS" active="module:obs">
+	<ObsPanel client:only="preact" />
+</AdminLayout>

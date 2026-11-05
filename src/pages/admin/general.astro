@@ -1,0 +1,8 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import GeneralPage from "../../components/admin/GeneralPage";
+---
+
+<AdminLayout title="General" active="general">
+	<GeneralPage client:only="preact" />
+</AdminLayout>

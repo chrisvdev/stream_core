@@ -1,0 +1,58 @@
+---
+import AdminToolbar from "../components/admin/AdminToolbar";
+import "../components/admin/admin.css";
+
+interface Props {
+  title: string;
+  /** Id of the current nav entry: "launchpad", "indicators", "general", "logs" or "module:<id>". */
+  active?: string;
+}
+
+const { title, active } = Astro.props;
+
+const links = [
+  { id: "logs", href: "/admin", label: "Logs" },
+  { id: "launchpad", href: "/admin/launchpad", label: "Launchpad" },
+  { id: "indicators", href: "/admin/indicators", label: "Indicadores" },
+  { id: "general", href: "/admin/general", label: "General" },
+  ...Astro.locals.core.modules
+    .catalog()
+    .flatMap((m) => (m.admin ? [{ id: `module:${m.id}`, href: m.admin.href, label: m.admin.label }] : [])),
+];
+---
+
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<title>{title} · Stream Core</title>
+		<style is:global>
+			body {
+				margin: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="admin">
+			<header>
+				<a href="/admin" class="brand"><h1>Stream Core</h1></a>
+				<nav class="tabs">
+					{
+						links.map((link) => (
+							<a href={link.href} class:list={["button", link.id === active ? "active" : "secondary"]}>
+								{link.label}
+							</a>
+						))
+					}
+				</nav>
+				<AdminToolbar client:only="preact" />
+			</header>
+			<slot />
+		</div>
+		<script>
+			import { installBrowserLogging } from "../components/admin/useCore";
+			installBrowserLogging();
+		</script>
+	</body>
+</html>

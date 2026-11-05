@@ -1,0 +1,8 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import SystemPanel from "../../../components/modules/system/SystemPanel";
+---
+
+<AdminLayout title="Sistema" active="module:system">
+	<SystemPanel client:only="preact" />
+</AdminLayout>

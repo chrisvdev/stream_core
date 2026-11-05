@@ -1,0 +1,8 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import HuePanel from "../../../components/modules/hue/HuePanel";
+---
+
+<AdminLayout title="Hue" active="module:hue">
+	<HuePanel client:only="preact" />
+</AdminLayout>

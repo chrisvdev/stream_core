@@ -1,0 +1,8 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import LaunchpadPage from "../../components/admin/LaunchpadPage";
+---
+
+<AdminLayout title="Launchpad" active="launchpad">
+	<LaunchpadPage client:only="preact" />
+</AdminLayout>

@@ -1,38 +1,36 @@
 {
-  "name": "streamcore",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "stream_core",
   "type": "module",
-  "scripts": {
-    "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
-    "start": "node --env-file=.env dist/index.js",
-    "dev": "tsc && (concurrently \"tsc -w\" \"tsc-alias -w\" \"node --watch --env-file=.env dist/index.js\")",
-    "install_service": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json && node --env-file=.env dist/install_service.js",
-    "uninstall_service": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json && node --env-file=.env dist/uninstall_service.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.23.4"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "start": "tsx server/index.ts",
+    "server:dev": "nodemon",
+    "astro": "astro"
+  },
   "dependencies": {
-    "axios": "^1.7.3",
-    "express": "^4.19.2",
-    "morgan": "^1.10.0",
-    "qs": "^6.13.0",
-    "uuid": "^10.0.0",
-    "ws": "^8.18.0"
+    "@astrojs/node": "^11.1.9",
+    "@astrojs/preact": "^6.1.1",
+    "@chrisvdev/launchpad-controller": "^1.1.0",
+    "astro": "^7.4.5",
+    "bonjour-service": "^1.4.4",
+    "easymidi": "^3.2.0",
+    "express": "^5.3.0",
+    "node-dtls-client": "^2.0.3",
+    "obs-websocket-js": "^5.0.8",
+    "preact": "^11.1.1",
+    "undici": "^8.12.3"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/morgan": "^1.9.9",
-    "@types/node": "^20.14.13",
-    "@types/uuid": "^10.0.0",
-    "@types/ws": "^8.5.12",
-    "tsc-alias": "^1.8.10",
-    "typescript": "^5.5.4"
-  },
-  "optionalDependencies": {
-    "bufferutil": "^4.0.8"
+    "@astrojs/check": "^0.9.12",
+    "@types/express": "^5.0.6",
+    "nodemon": "^3.1.14",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3"
   }
 }

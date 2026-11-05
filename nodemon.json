@@ -1,0 +1,8 @@
+{
+  "watch": ["src", "server", "public", "astro.config.mjs"],
+  "ext": "ts,astro,mjs,js,css,json",
+  "ignore": ["dist", "node_modules", ".astro", "data"],
+  "delay": 500,
+  "signal": "SIGTERM",
+  "exec": "astro build && tsx server/index.ts"
+}

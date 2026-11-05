@@ -1,0 +1,8 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import IndicatorsPage from "../../components/admin/IndicatorsPage";
+---
+
+<AdminLayout title="Indicadores" active="indicators">
+	<IndicatorsPage client:only="preact" />
+</AdminLayout>

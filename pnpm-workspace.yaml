@@ -1,0 +1,5 @@
+allowBuilds:
+  '@julusian/midi': true
+  esbuild: true
+minimumReleaseAgeExclude:
+  - '@chrisvdev/launchpad-controller@1.1.0'
